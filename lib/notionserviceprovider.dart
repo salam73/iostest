@@ -5,7 +5,7 @@ import 'notionservice.dart';
 final notionServiceProvider = Provider((ref) => NotionService());
 
 final notionPagesProvider =
-    StateNotifierProvider<NotionPagesNotifier, List<NotionPageMoh>>((ref) {
+StateNotifierProvider<NotionPagesNotifier, List<NotionPageMoh>>((ref) {
   final notionService = ref.watch(notionServiceProvider);
   return NotionPagesNotifier(notionService);
 });
@@ -28,13 +28,14 @@ class NotionPagesNotifier extends StateNotifier<List<NotionPageMoh>> {
 
     while (hasMore) {
       final result =
-          await notionService.fetchNotionPages(startCursor: nextCursor);
+      await notionService.fetchNotionPages(startCursor: nextCursor);
       allPages = [...allPages, ...result['notionPages']];
       hasMore = result['hasMore'];
       nextCursor = result['nextCursor'];
+      state = allPages;
     }
 
-    state = allPages;
+
     isLoading = false;
     applyFilter();
   }

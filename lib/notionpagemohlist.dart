@@ -17,14 +17,13 @@ class NotionPageMohList extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notion Pages'),
+        title: Center(child: Text('اهل ')),
         actions: [
-          IconButton(
-            icon: Icon(Icons.sort),
-            onPressed: () {
-              notionPagesNotifier.toggleSortOrder();
-            },
-          ),
+          ElevatedButton(
+              onPressed: () {
+                notionPagesNotifier.toggleSortOrder();
+              },
+              child: Text('ok'))
         ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(48.0),
