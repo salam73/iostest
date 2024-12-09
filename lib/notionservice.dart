@@ -11,7 +11,9 @@ const databaseId = '82566198aca9482c87ff3e2bdb7f484c';
 const baseUrl = 'https://api.notion.com/v1';
 
 class NotionService {
-  static const String proxyUrl = 'http://localhost:3000/notion';
+  static const String proxyUrl =
+     //  'http://localhost:3000/notion';
+       'https://nodeserver-o4yzrxfy.b4a.run/notion';
   static const int pageSize = 50; // Number of items to fetch per request
   // ignore: prefer_typing_uninitialized_variables
   var response;
