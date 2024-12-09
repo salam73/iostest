@@ -1,18 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'notionpagemoh.dart';
 import 'notionservice.dart';
 
 final notionServiceProvider = Provider((ref) => NotionService());
 
 final notionPagesProvider =
-StateNotifierProvider<NotionPagesNotifier, List<NotionPageMoh>>((ref) {
+    StateNotifierProvider<NotionPagesNotifier, List<NotionPageMoh>>((ref) {
   final notionService = ref.watch(notionServiceProvider);
   return NotionPagesNotifier(notionService);
 });
 
 class NotionPagesNotifier extends StateNotifier<List<NotionPageMoh>> {
   NotionPagesNotifier(this.notionService) : super([]) {
-    fetchAllPages();
+    loadPages();
   }
 
   final NotionService notionService;
@@ -21,23 +22,39 @@ class NotionPagesNotifier extends StateNotifier<List<NotionPageMoh>> {
   String? filterCategory;
   List<NotionPageMoh> allPages = [];
 
-  Future<void> fetchAllPages() async {
+  Future<void> loadPages() async {
     isLoading = true;
+    final box = Hive.box<NotionPageMoh>('notionPages');
+
+    if (box.isNotEmpty) {
+      allPages = box.values.toList();
+      state = allPages;
+      isLoading = false;
+    } else {
+      await fetchAllPages();
+    }
+  }
+
+  Future<void> fetchAllPages() async {
     String? nextCursor;
     bool hasMore = true;
 
     while (hasMore) {
       final result =
-      await notionService.fetchNotionPages(startCursor: nextCursor);
+          await notionService.fetchNotionPages(startCursor: nextCursor);
       allPages = [...allPages, ...result['notionPages']];
       hasMore = result['hasMore'];
       nextCursor = result['nextCursor'];
       state = allPages;
     }
 
-
     isLoading = false;
     applyFilter();
+
+    // Save the data to Hive
+    final box = Hive.box<NotionPageMoh>('notionPages');
+    await box.clear();
+    await box.addAll(allPages);
   }
 
   void toggleSortOrder() {

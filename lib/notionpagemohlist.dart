@@ -17,13 +17,14 @@ class NotionPageMohList extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('اهل ')),
+        title: Text('Notion Pages'),
         actions: [
-          ElevatedButton(
-              onPressed: () {
-                notionPagesNotifier.toggleSortOrder();
-              },
-              child: Text('ok'))
+          IconButton(
+            icon: Icon(Icons.sort),
+            onPressed: () {
+              notionPagesNotifier.toggleSortOrder();
+            },
+          ),
         ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(48.0),
@@ -89,21 +90,22 @@ class NotionPageMohList extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          page.pictureUrls!.isNotEmpty &&
-                                  page.pictureUrls!.length > 1
-                              ? SizedBox(
-                                  height: 300,
-                                  child: PhotoGallery(
-                                    photoUrls: page.pictureUrls!,
-                                    notionPage: page,
-                                  ),
-                                )
-                              : page.pictureUrls!.isNotEmpty
-                                  ? Image.network(
-                                      page.pictureUrls![0],
-                                      height: 100,
-                                    )
-                                  : SizedBox(),
+                          if (page.pictureUrls!.isNotEmpty &&
+                              page.pictureUrls!.length > 1)
+                            SizedBox(
+                              height: 300,
+                              child: PhotoGallery(
+                                photoUrls: page.pictureUrls!,
+                                notionPage: page,
+                              ),
+                            )
+                          else if (page.pictureUrls!.isNotEmpty)
+                            Image.network(
+                              page.pictureUrls![0],
+                              height: 100,
+                            )
+                          else
+                            SizedBox(),
                           Text(page.title),
                           Text(page.category ?? 'No category'),
                           Text(page.number?.toString() ?? 'No number'),
